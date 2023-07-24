@@ -9,7 +9,7 @@ function WatchContainer() {
 
     const gmtTab = getGmtTab();
     const myElements = gmtTab.map((x, i) =>
-        <Watch key={i} GMT={gmtTab[i]} />
+        <Watch key={i} GMT={gmtTab[i]}  scale={{x_scale:1,y_scale:1}} />
     )
     const [watches, setWateches] = useState({
         watches: myElements
@@ -28,7 +28,7 @@ function WatchContainer() {
 
     const handleChange = () => {
         const gmt = document.getElementById("GMT").value;
-        const newWatch = <Watch key={watches.watches.length} GMT={gmt} />;
+        const newWatch = <Watch key={watches.watches.length} GMT={gmt} scale={{x_scale:1,y_scale:1}} />;
         var watchesArray = watches.watches
         watchesArray.push(newWatch)
         setWateches({ watches: watchesArray })

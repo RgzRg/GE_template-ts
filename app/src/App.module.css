@@ -1,3 +1,15 @@
 :local(.App) {
     height: 100%;
 }
+
+:local(.button) {
+    color:#405cf5;
+    background-color: white;
+    border: solid;
+    border-color: #405cf5;
+    left:0;
+}
+
+:local(.button:hover) {
+    text-decoration: underline;
+}

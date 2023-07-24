@@ -1,13 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import styles from './style/Watch.module.css';
-import { haveNiceDisplay, nextSecond, fromAmToSt, fromStToAm, init } from './utils/Watch';
+import { haveNiceDisplay, nextSecond, fromAmToSt, fromStToAm, init, initDimensions, setDimensions } from './utils/Watch';
+import montre from './../img/montre.png'
 
-
-
-function Watch(props) {
+const Watch = forwardRef(function Watch(props,ref) {
 
     const gmt = props.GMT - 2;
     const startDate = init(gmt);
+
+    const dimInit = initDimensions();
+    
+    const [dim, setDim] = useState(dimInit)
+
+    useEffect( () => {
+        const x_scale = props.scale.x_scale;
+        const y_scale = props.scale.y_scale;
+        const reset = props.scale.reset;
+        const newDim = setDimensions(dim,x_scale,y_scale,reset)
+        setDim(newDim)       
+    }, [props.scale])
+
+
+    
+
 
     const [time, setTime] = useState({
         hours: startDate.hours,
@@ -16,6 +31,8 @@ function Watch(props) {
         mode: "ST"
     });
 
+    
+    
     const [colors, setColors] = useState({
         hoursColor: "black",
         minutesColor: "black",
@@ -30,7 +47,8 @@ function Watch(props) {
     const [nightBtnState, setNightButtonState] = useState({
         isNightMode: false
     })
-
+    
+   
     useEffect(() => {
         const interval = setInterval(() => {
             var newTime = nextSecond(time.hours, time.minutes, parseInt(time.seconds) + 1, time.mode);
@@ -200,67 +218,73 @@ function Watch(props) {
         }
     }
 
-    return <div>
-        <div className={styles.watch}>
-            <div className={styles.screen} style={{ backgroundColor: colors.backgroundColor }}>
+    
+    return <div className={styles.container} style={{fontSize: `${dim.xlargeFont}px`, width: `${dim.watchWidth}px`, height: `content-fit`, marginLeft:"auto", marginRight:"auto"}}  ref={ref}>
+        <div className={styles.watch} style={{ width: `${dim.watchWidth}px`, height: `${dim.watchHeight}px` }}>
+            <img src={montre} style={{ width: `${dim.watchWidth}px`, height: `${dim.watchHeight}px` }}/>
+            <div className={styles.screen} style={{ backgroundColor: colors.backgroundColor, width: `${dim.screenWidth}px`, height: `${dim.screenHeight}px`, top: `${dim.screenTop}px`, left: `${dim.screenLeft}px` }}>
                 <div className={styles.topScreen} style={{ color: colors.secondsColor }}>
                     {time.mode}
                 </div>
+
                 <div className={styles.bottomScreen}>
                     <div className={styles.hours}>
                         <div className={styles.hoursDisplayer}>
-                            <div className={styles.hoursDisplay} style={{ color: colors.hoursColor }}>
+                            <div className={styles.hoursDisplay} style={{ color: colors.hoursColor, fontSize: `${dim.xlargeFont}px` }}>
                                 {time.hours}
                             </div>
                         </div>
                     </div>
-                    <div className={styles.firstSpace}>
+                    <div className={styles.firstSpace}  style={{left:`${dim.firstSpaceLeft}px`}}>
                         <div className={styles.firstSpaceDisplayer}>
-                            <div className={styles.firstSpaceDisplay} style={{ color: colors.secondsColor }}>
+                            <div className={styles.firstSpaceDisplay} style={{ color: colors.secondsColor, fontSize: `${dim.xlargeFont}px` }}>
                                 :
                             </div>
                         </div>
                     </div>
-                    <div className={styles.minutes}>
-                        <div className={styles.minutesDisplayer}>
-                            <div className={styles.minutesDisplay} style={{ color: colors.minutesColor }}>
+                    <div className={styles.minutes}  style={{left:`${dim.minutesLeft}px`}}>
+                    <div className={styles.minutesDisplayer}>
+                            <div className={styles.minutesDisplay} style={{ color: colors.minutesColor, fontSize: `${dim.xlargeFont}px` }}>
                                 {time.minutes}
                             </div>
                         </div>
                     </div>
-                    <div className={styles.secondSpace}>
+                    <div className={styles.secondSpace}  style={{left:`${dim.secondSpaceLeft}px`}}>
 
                     </div>
                     <div className={styles.seconds}>
-                        <div className={styles.secondsDisplayer}>
-                            <div className={styles.secondsDisplay} style={{ color: colors.secondsColor }}>
+                    <div className={styles.secondsDisplayer}>
+                            <div className={styles.secondsDisplay} style={{ color: colors.secondsColor, fontSize:`${dim.smallFont}px` }}>
                                 {time.seconds}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <button className={styles.modeButton} onClick={handleModeClick}>
+
+            <button className={styles.modeButton} onClick={handleModeClick}  style={{width:`${dim.widthBtn}px`, height:`${dim.heightBtn}px`, top:`${dim.modeTop}px`}}>
 
             </button>
-            <button className={styles.increaseButton} onClick={handleIncreaseClick}>
+            <button className={styles.increaseButton} onClick={handleIncreaseClick}  style={{width:`${dim.widthBtn}px`, height:`${dim.heightBtn}px`, bottom:`${dim.increaseBottom}px`}}>
 
             </button>
-            <button className={styles.nightModeButton} onClick={handleNightModeClick}>
+            <button className={styles.nightModeButton} onClick={handleNightModeClick} style={{width:`${dim.widthBtn}px`, height:`${dim.heightBtn}px`, bottom:`${dim.nightModeBottom}px`}} >
 
             </button>
-            <button className={styles.resetButton} onClick={handleResetClick}>
+            <button className={styles.resetButton} onClick={handleResetClick}  style={{width:`${dim.widthBtn}px`, height:`${dim.heightBtn}px`, top:`${dim.resetTop}px`}}>
 
             </button>
-            <button className={styles.amModeButton} onClick={handleAmModeClick}>
+            <button className={styles.amModeButton} onClick={handleAmModeClick} style={{width:`${dim.widthBtn}px`, height:`${dim.heightBtn}px`, top:`${dim.amModetop}px`, left:`${dim.amModeLeft}px`}}>
 
             </button>
-
         </div>
         <div className={styles.GMT}>
             GMT {props.GMT < 0 ? props.GMT : "+" + props.GMT}
         </div>
     </div>
-}
+    
+    
+   
+});
 
 export default Watch;
